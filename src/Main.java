@@ -1,3 +1,6 @@
+import tasks.*;
+import managers.TaskManager;
+
 public class Main {
 
     private static final TaskManager manager = new TaskManager();
