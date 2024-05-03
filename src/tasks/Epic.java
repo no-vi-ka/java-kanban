@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Epic extends Task {
 
-    //private final HashMap<Integer, SubTask> subTasks = new HashMap<>();
-    public ArrayList<SubTask> subTasksList = new ArrayList<>();
+
+    public ArrayList<SubTask> subTasksList;
     public Epic(String title, String description) {
         super(title, description);
         subTasksList = new ArrayList<>();
