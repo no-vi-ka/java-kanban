@@ -1,9 +1,11 @@
+import managers.InMemoryHistoryManager;
 import tasks.*;
 import managers.InMemoryTaskManager;
 
 public class Main {
 
     private static final InMemoryTaskManager manager = new InMemoryTaskManager();
+    private static final InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
 
     public static void main(String[] args) {
         System.out.println("Поехали!");
@@ -50,6 +52,7 @@ public class Main {
         printTasks();
 
     }
+
     private static void printTasks() {
         System.out.println("Список эпиков: ");
         System.out.println(manager.getAllEpics());
@@ -57,6 +60,10 @@ public class Main {
         System.out.println(manager.getAllTasks());
         System.out.println("Список подзадач: ");
         System.out.println(manager.getAllSubTasks());
+        System.out.println("История:");
+        for (Task task : manager.getHistory()) {
+            System.out.println(task);
+        }
     }
 }
 

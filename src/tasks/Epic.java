@@ -16,7 +16,15 @@ public class Epic extends Task {
         super(epic);
         ArrayList<SubTask> copiedSubTasksList = new ArrayList<>();
         copiedSubTasksList.addAll(epic.subTasksList);
-        this.subTasksList = copiedSubTasksList;
+        this.subTasksList = deepCopyArrayList(epic);
+    }
+
+    private ArrayList<SubTask> deepCopyArrayList(Epic epic) {
+        ArrayList<SubTask> newListOfSubTasks = new ArrayList<>();
+        for (SubTask subTask : epic.subTasksList){
+            newListOfSubTasks.add(new SubTask(subTask));
+        }
+        return newListOfSubTasks;
     }
 
     public void addSubtask(SubTask newSubtask) {
