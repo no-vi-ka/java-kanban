@@ -1,9 +1,9 @@
 import tasks.*;
-import managers.TaskManager;
+import managers.InMemoryTaskManager;
 
 public class Main {
 
-    private static final TaskManager manager = new TaskManager();
+    private static final InMemoryTaskManager manager = new InMemoryTaskManager();
 
     public static void main(String[] args) {
         System.out.println("Поехали!");

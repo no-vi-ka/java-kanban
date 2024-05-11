@@ -3,9 +3,9 @@ package tasks;
 import java.util.Objects;
 
 public class Task {
-    protected String title;
-    protected String description;
-    protected Integer id;
+    private String title;
+    private String description;
+    private Integer id;
     protected Status status;
 
     public Status getStatus() {
@@ -44,6 +44,12 @@ public class Task {
         this.title = title;
         this.description = description;
         this.status = Status.NEW;
+    }
+
+    public Task(Task task) {
+        this(task.description, task.title);
+        this.status = task.status;
+        this.id = task.id;
     }
 
     @Override

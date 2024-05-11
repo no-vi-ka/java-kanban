@@ -1,6 +1,7 @@
 package tasks;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Epic extends Task {
 
@@ -10,6 +11,13 @@ public class Epic extends Task {
         super(title, description);
         subTasksList = new ArrayList<>();
       }
+
+    public Epic(Epic epic) {
+        super(epic);
+        ArrayList<SubTask> copiedSubTasksList = new ArrayList<>();
+        copiedSubTasksList.addAll(epic.subTasksList);
+        this.subTasksList = copiedSubTasksList;
+    }
 
     public void addSubtask(SubTask newSubtask) {
         if (!subTasksList.contains(newSubtask)) {
@@ -38,35 +46,35 @@ public class Epic extends Task {
     }
 
     public void updateEpicStatus() {
-            if (subTasksList.isEmpty()) {
-                status = Status.NEW;
-                return;
-            }
-            int doneCounter = 0;
-            int newCounter = 0;
-            for (SubTask subTask : subTasksList) {
-                if (subTask.getStatus() == Status.NEW) {
-                    newCounter++;
-                } else if (subTask.getStatus() == Status.DONE) {
-                    doneCounter++;
-                }
-            }
-            if (doneCounter == subTasksList.size()) {
-                status = Status.DONE;
-            } else if (newCounter == subTasksList.size()) {
-                status = Status.NEW;
-            } else {
-                status = Status.IN_PROGRESS;
+        if (subTasksList.isEmpty()) {
+            status = Status.NEW;
+            return;
+        }
+        int doneCounter = 0;
+        int newCounter = 0;
+        for (SubTask subTask : subTasksList) {
+            if (subTask.getStatus() == Status.NEW) {
+                newCounter++;
+            } else if (subTask.getStatus() == Status.DONE) {
+                doneCounter++;
             }
         }
+        if (doneCounter == subTasksList.size()) {
+            status = Status.DONE;
+        } else if (newCounter == subTasksList.size()) {
+            status = Status.NEW;
+        } else {
+            status = Status.IN_PROGRESS;
+        }
+    }
 
     @Override
     public String toString() {
         return "Epic {" +
                 "subtasks = " + subTasksList +
-                ", title = '" + title + '\'' +
-                ", description = '" + description + '\'' +
-                ", id = " + id +
+                ", title = '" + getTitle() + '\'' +
+                ", description = '" + getDescription() + '\'' +
+                ", id = " + getId() +
                 ", status = " + status +
                 '}';
     }
