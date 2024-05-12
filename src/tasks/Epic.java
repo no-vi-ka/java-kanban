@@ -1,12 +1,12 @@
 package tasks;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
 public class Epic extends Task {
 
 
-    public ArrayList<SubTask> subTasksList;
+    public List<SubTask> subTasksList;
     public Epic(String title, String description) {
         super(title, description);
         subTasksList = new ArrayList<>();
@@ -19,7 +19,7 @@ public class Epic extends Task {
         this.subTasksList = deepCopyArrayList(epic);
     }
 
-    private ArrayList<SubTask> deepCopyArrayList(Epic epic) {
+    private List<SubTask> deepCopyArrayList(Epic epic) {
         ArrayList<SubTask> newListOfSubTasks = new ArrayList<>();
         for (SubTask subTask : epic.subTasksList){
             newListOfSubTasks.add(new SubTask(subTask));
@@ -41,7 +41,7 @@ public class Epic extends Task {
         }
     }
 
-    public ArrayList<SubTask> getSubTasks() {
+    public List<SubTask> getSubTasks() {
         return new ArrayList<>(subTasksList);
     }
 

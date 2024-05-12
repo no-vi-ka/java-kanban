@@ -1,8 +1,10 @@
 package managers;
 
 import static org.junit.jupiter.api.Assertions.*;
-import tasks.*;
-import managers.*;
+import tasks.Task;
+import tasks.SubTask;
+import tasks.Epic;
+import tasks.Status;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
@@ -182,7 +184,7 @@ public class InMemoryTaskManagerTest {
         final Task savedTask = manager.getTaskById(taskId);
         assertNotNull(savedTask, "Задача не найдена.");
         assertEquals(task, savedTask, "Задачи не совпадают.");
-        final ArrayList<Task> tasks = manager.getAllTasks();
+        final List<Task> tasks = manager.getAllTasks();
         assertNotNull(tasks, "Задачи не возвращаются.");
         assertEquals(1, tasks.size(), "Неверное количество задач.");
         assertEquals(task, tasks.get(0), "Задачи не совпадают.");

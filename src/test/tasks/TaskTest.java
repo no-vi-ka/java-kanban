@@ -1,6 +1,5 @@
 package tasks;
 
-import tasks.Task;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 
