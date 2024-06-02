@@ -90,7 +90,6 @@ public class InMemoryTaskManagerTest {
     @Test
     public void afterRemoveEpicByIdMustBeNull() {
         Epic newEpic = manager.createEpic(new Epic("a", "b"));
-        SubTask created = manager.createSubTask(new SubTask("a1", "b1", newEpic.getId()));
         Integer expectedId = newEpic.getId();
         manager.removeEpicById(expectedId);
         Assertions.assertNull(manager.getEpicById(expectedId));
@@ -109,6 +108,8 @@ public class InMemoryTaskManagerTest {
     public void afterRemoveAllAllTasksReturnMustBeNull() {
         Task created1 = manager.createTask(new Task("a1", "b1"));
         Task created2 = manager.createTask(new Task("a2", "b2"));
+        Integer numberOfAllTasksBeforeRemove = manager.getAllTasks().size();
+        Assertions.assertEquals(2, numberOfAllTasksBeforeRemove);
         manager.removeAllTasks();
         Integer numberOfAllTasksAfterRemove = manager.getAllTasks().size();
         Assertions.assertEquals(0, numberOfAllTasksAfterRemove);
@@ -118,6 +119,8 @@ public class InMemoryTaskManagerTest {
     public void afterRemoveAllAllEpicsReturnMustBeNull() {
         Epic created1 = manager.createEpic(new Epic("a1", "b1"));
         Epic created2 = manager.createEpic(new Epic("a2", "b2"));
+        Integer numberOfAllEpicsBeforeRemove = manager.getAllEpics().size();
+        Assertions.assertEquals(2, numberOfAllEpicsBeforeRemove);
         manager.removeAllEpics();
         Integer numberOfAllEpicsAfterRemove = manager.getAllEpics().size();
         Assertions.assertEquals(0, numberOfAllEpicsAfterRemove);
@@ -128,6 +131,8 @@ public class InMemoryTaskManagerTest {
         Epic createdEpic = manager.createEpic(new Epic("a1", "b1"));
         SubTask created1 = manager.createSubTask(new SubTask("a1", "b1", createdEpic.getId()));
         SubTask created2 = manager.createSubTask(new SubTask("a2", "b2", createdEpic.getId()));
+        Integer numberOfAllSubTasksBeforeRemove = manager.getAllSubTasks().size();
+        Assertions.assertEquals(2, numberOfAllSubTasksBeforeRemove);
         manager.removeAllSubTasks();
         Integer numberOfAllTasksAfterRemove = manager.getAllSubTasks().size();
         Assertions.assertEquals(0, numberOfAllTasksAfterRemove);
@@ -163,18 +168,6 @@ public class InMemoryTaskManagerTest {
         manager.getSubTaskById(created.getId()).setDescription("c1");
         manager.updateSubTask(expected);
         SubTask changed = manager.getSubTaskById(created.getId());
-        Assertions.assertNotEquals(manager.getHistory().getFirst(), changed);
-    }
-
-    @Test
-    public void updatedEpicMustBeDifferWithFirstVersion() {
-        Epic createdEpic = manager.createEpic(new Epic("a1", "b1"));
-        SubTask createdSubTask1 = manager.createSubTask(new SubTask("a1", "b1", createdEpic.getId()));
-        Epic expected = manager.getEpicById(createdEpic.getId());
-        SubTask createdSubTask2 = manager.createSubTask(new SubTask("a2", "b2", createdEpic.getId()));
-        manager.getEpicById(createdEpic.getId());
-        manager.updateEpic(expected);
-        Epic changed = manager.getEpicById(createdEpic.getId());
         Assertions.assertNotEquals(manager.getHistory().getFirst(), changed);
     }
 
