@@ -1,17 +1,17 @@
 package managers;
 
-import static org.junit.jupiter.api.Assertions.*;
-import tasks.Task;
-import tasks.SubTask;
-import tasks.Epic;
-import tasks.Status;
-
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import tasks.Epic;
+import tasks.Status;
+import tasks.SubTask;
+import tasks.Task;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class InMemoryTaskManagerTest {
 
@@ -165,6 +165,7 @@ public class InMemoryTaskManagerTest {
         SubTask changed = manager.getSubTaskById(created.getId());
         Assertions.assertNotEquals(manager.getHistory().getFirst(), changed);
     }
+
     @Test
     public void updatedEpicMustBeDifferWithFirstVersion() {
         Epic createdEpic = manager.createEpic(new Epic("a1", "b1"));
@@ -187,6 +188,6 @@ public class InMemoryTaskManagerTest {
         final List<Task> tasks = manager.getAllTasks();
         assertNotNull(tasks, "Задачи не возвращаются.");
         assertEquals(1, tasks.size(), "Неверное количество задач.");
-        assertEquals(task, tasks.get(0), "Задачи не совпадают.");
+        assertEquals(task, tasks.getFirst(), "Задачи не совпадают.");
     }
 }
