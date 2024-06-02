@@ -80,7 +80,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void AfterRemoveTaskByIdMustBeNull() {
+    public void afterRemoveTaskByIdMustBeNull() {
         Task newTask = manager.createTask(new Task("a", "b"));
         Integer expectedId = newTask.getId();
         manager.removeTaskById(expectedId);
@@ -88,7 +88,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void AfterRemoveEpicByIdMustBeNull() {
+    public void afterRemoveEpicByIdMustBeNull() {
         Epic newEpic = manager.createEpic(new Epic("a", "b"));
         SubTask created = manager.createSubTask(new SubTask("a1", "b1", newEpic.getId()));
         Integer expectedId = newEpic.getId();
@@ -97,7 +97,7 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void AfterRemoveSubTaskByIdMustBeNull() {
+    public void afterRemoveSubTaskByIdMustBeNull() {
         Epic newEpic = manager.createEpic(new Epic("a", "b"));
         SubTask created = manager.createSubTask(new SubTask("a1", "b1", newEpic.getId()));
         Integer expectedId = created.getId();
