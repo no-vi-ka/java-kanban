@@ -23,6 +23,7 @@ public class InMemoryHistoryManagerTest {
     @Test
     void historyListMustBeNotEmptyAfterTasksWereAdded() {
         Task newTask = new Task("a", "b");
+        manager.createTask(newTask);
         historyManager.addTask(newTask);
         final List<Task> history = historyManager.getHistory();
         assertNotNull(history, "История не пустая.");

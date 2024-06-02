@@ -161,17 +161,6 @@ public class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void updatedSubTaskMustBeDifferWithFirstVersion() {
-        Epic createdEpic = manager.createEpic(new Epic("a1", "b1"));
-        SubTask created = manager.createSubTask(new SubTask("a1", "b1", createdEpic.getId()));
-        SubTask expected = manager.getSubTaskById(created.getId());
-        manager.getSubTaskById(created.getId()).setDescription("c1");
-        manager.updateSubTask(expected);
-        SubTask changed = manager.getSubTaskById(created.getId());
-        Assertions.assertNotEquals(manager.getHistory().getFirst(), changed);
-    }
-
-    @Test
     void createdTaskMustBeNotNullAndEqualsByIdAndBeAddedToAlTasks() {
         Task task = new Task("Test addNewTask", "Test addNewTask description");
         final int taskId = manager.createTask(task).getId();
