@@ -42,16 +42,6 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void historyManagerMustSaveFirstVersionOfTaskAndChangedVersion() {
-        Task task = new Task("a", "b");
-        Task newTask = manager.createTask(task);
-        manager.getTaskById(newTask.getId());
-        newTask.setTitle("a1");
-        manager.updateTask(newTask);
-        Assertions.assertNotEquals(manager.getHistory().getFirst().getTitle(), task.getTitle());
-    }
-
-    @Test
     public void historyShouldContainsUniqueRecords() {
         Task task1 = new Task("a1", "b1");
         Task task2 = new Task("a2", "b2");

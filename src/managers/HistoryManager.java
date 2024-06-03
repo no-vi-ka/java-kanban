@@ -10,7 +10,5 @@ public interface HistoryManager {
     void remove(int id);
 
     List<Task> getHistory();
-
-    void linkLast(Task task);
 }
 

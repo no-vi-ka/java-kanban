@@ -1,7 +1,5 @@
 package managers;
 
-import tasks.Epic;
-import tasks.SubTask;
 import tasks.Task;
 
 import java.util.ArrayList;
@@ -20,17 +18,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             if (tasksHistory.get(task.getId()) != null) {
                 remove(task.getId());
             }
-            if (task instanceof Epic) {
-                Epic epicToAdd = new Epic((Epic) task);
-                linkLast(epicToAdd);
-                return;
-            } else if (task instanceof SubTask) {
-                SubTask subTaskToAdd = new SubTask((SubTask) task);
-                linkLast(subTaskToAdd);
-                return;
-            }
-            Task taskToAdd = new Task(task);
-            linkLast(taskToAdd);
+            linkLast(task);
         }
     }
 
