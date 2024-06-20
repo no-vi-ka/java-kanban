@@ -1,18 +1,14 @@
 package managers;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class FileBackedTaskManagerTest {
 
@@ -22,7 +18,6 @@ class FileBackedTaskManagerTest {
         String separator = System.lineSeparator();
         try {
             File file = File.createTempFile("test", "csv");
-            FileBackedTaskManager fileManager = new FileBackedTaskManager(file);
 
             String[] lines = Files.readString(file.toPath()).split(separator);
             Assertions.assertEquals(lines.length, 1);
