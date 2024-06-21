@@ -165,7 +165,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    private TaskTypes getType(Task task) {
+    private static TaskTypes getType(Task task) {
         if (task instanceof Epic) {
             return TaskTypes.EPIC;
         } else if (task instanceof SubTask) {
@@ -193,35 +193,29 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String title = splittedString[2];
         Status taskStatus = Status.valueOf(splittedString[3]);
         String description = splittedString[4];
-        Task task = null;
-        if (splittedString.length == 6) {
-            int epicId = Integer.parseInt(splittedString[5]);
-            task = new SubTask(title, description, epicId);
-            task.setId(id);
-            task.setStatus(taskStatus);
-            return task;
-        } else {
-            if (taskType == TaskTypes.TASK) {
-                task = new Task(title, description);
-                task.setId(id);
-                task.setStatus(taskStatus);
-                return task;
-            } else {
-                task = new Epic(title, description);
-                task.setId(id);
-                task.setStatus(taskStatus);
-                return task;
+        Task task = switch (taskType) {
+            case TaskTypes.SUBTASK -> {
+                int epicId = Integer.parseInt(splittedString[5]);
+                yield new SubTask(title, description, epicId);
             }
-        }
+            case TaskTypes.TASK -> new Task(title, description);
+            case TaskTypes.EPIC -> new Epic(title, description);
+        };
+        task.setId(id);
+        task.setStatus(taskStatus);
+        return task;
     }
 
+
     private static TaskTypes toEnum(Task task) {
-        if (task instanceof Epic) {
-            return TaskTypes.EPIC;
-        } else if (task instanceof SubTask) {
-            return TaskTypes.SUBTASK;
-        }
-        return TaskTypes.TASK;
+        TaskTypes type = null;
+        if (getType(task).equals(TaskTypes.EPIC)) {
+            type = TaskTypes.EPIC;
+        } else if (getType(task).equals(TaskTypes.SUBTASK)) {
+            type = TaskTypes.SUBTASK;
+        } else if (getType(task).equals(TaskTypes.TASK))
+            type = TaskTypes.TASK;
+        return type;
     }
 
     public static FileBackedTaskManager loadFromFile(File file) {
