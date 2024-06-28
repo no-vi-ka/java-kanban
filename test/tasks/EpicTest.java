@@ -1,8 +1,7 @@
 package tasks;
 
-import tasks.Epic;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class EpicTest {
     @Test

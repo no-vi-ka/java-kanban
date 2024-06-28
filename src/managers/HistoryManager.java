@@ -1,11 +1,13 @@
 package managers;
 
-import tasks.*;
+import tasks.Task;
 
 import java.util.List;
 
 public interface HistoryManager {
-    void addTask (Task task);
+    void addTask(Task task);
+
+    void remove(int id);
 
     List<Task> getHistory();
 }

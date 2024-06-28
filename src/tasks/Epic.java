@@ -5,12 +5,12 @@ import java.util.List;
 
 public class Epic extends Task {
 
-
     public List<SubTask> subTasksList;
+
     public Epic(String title, String description) {
         super(title, description);
         subTasksList = new ArrayList<>();
-      }
+    }
 
     public Epic(Epic epic) {
         super(epic);
@@ -21,7 +21,7 @@ public class Epic extends Task {
 
     private List<SubTask> deepCopyArrayList(Epic epic) {
         ArrayList<SubTask> newListOfSubTasks = new ArrayList<>();
-        for (SubTask subTask : epic.subTasksList){
+        for (SubTask subTask : epic.subTasksList) {
             newListOfSubTasks.add(new SubTask(subTask));
         }
         return newListOfSubTasks;

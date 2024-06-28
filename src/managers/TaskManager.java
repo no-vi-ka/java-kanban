@@ -1,9 +1,8 @@
 package managers;
 
-import tasks.Task;
-import tasks.SubTask;
 import tasks.Epic;
-import tasks.Status;
+import tasks.SubTask;
+import tasks.Task;
 
 import java.util.List;
 
@@ -29,6 +28,7 @@ public interface TaskManager {
     void removeTaskById(Integer id);
 
     void removeEpicById(Integer id);
+
     void removeSubtaskById(Integer id);
 
     Task getTaskById(Integer id);
