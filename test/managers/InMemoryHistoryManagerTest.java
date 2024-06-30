@@ -4,6 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,7 +24,8 @@ public class InMemoryHistoryManagerTest {
 
     @Test
     void historyListMustBeNotEmptyAfterTasksWereAdded() {
-        Task newTask = new Task("a", "b");
+        Task newTask = new Task("a", "b", Duration.ofMinutes(10), LocalDateTime.of(2010, Month.JUNE,
+                10, 10, 10));
         manager.createTask(newTask);
         historyManager.addTask(newTask);
         final List<Task> history = historyManager.getHistory();
@@ -31,8 +35,10 @@ public class InMemoryHistoryManagerTest {
 
     @Test
     public void sizeOfHistoryListMustBeEqualsNumberOfAddedTasks() {
-        Task task1 = new Task("a1", "b1");
-        Task task2 = new Task("a2", "b2");
+        Task task1 = new Task("a1", "b1", Duration.ofMinutes(10), LocalDateTime.of(2010, Month.JUNE,
+                10, 10, 10));
+        Task task2 = new Task("a2", "b2", Duration.ofMinutes(30), LocalDateTime.of(2020, Month.JULY,
+                20, 20, 20));
         Task newTask1 = manager.createTask(task1);
         Task newTask2 = manager.createTask(task2);
         historyManager.addTask(newTask1);
@@ -42,10 +48,14 @@ public class InMemoryHistoryManagerTest {
 
     @Test
     public void historyShouldContainsUniqueRecords() {
-        Task task1 = new Task("a1", "b1");
-        Task task2 = new Task("a2", "b2");
-        Task task3 = new Task("a3", "b3");
-        Task task4 = new Task("a41", "b4");
+        Task task1 = new Task("a1", "b1", Duration.ofMinutes(10), LocalDateTime.of(2010, Month.JUNE,
+                10, 10, 10));
+        Task task2 = new Task("a2", "b2", Duration.ofMinutes(30), LocalDateTime.of(2020, Month.JULY,
+                20, 20, 20));
+        Task task3 = new Task("a3", "b3", Duration.ofMinutes(30), LocalDateTime.of(2030, Month.AUGUST,
+                10, 10, 10));
+        Task task4 = new Task("a4", "b4", Duration.ofMinutes(40), LocalDateTime.of(2040, Month.SEPTEMBER,
+                20, 20, 20));
 
         Task newTask1 = manager.createTask(task1);
         Task newTask2 = manager.createTask(task2);
@@ -65,8 +75,10 @@ public class InMemoryHistoryManagerTest {
 
     @Test
     public void historyShouldContainsTheLastVersionOfRecord() {
-        Task task1 = new Task("a1", "b1");
-        Task task2 = new Task("a2", "b2");
+        Task task1 = new Task("a1", "b1", Duration.ofMinutes(10), LocalDateTime.of(2010, Month.JUNE,
+                10, 10, 10));
+        Task task2 = new Task("a2", "b2", Duration.ofMinutes(30), LocalDateTime.of(2020, Month.JULY,
+                20, 20, 20));
         Task newTask1 = manager.createTask(task1);
         Task newTask2 = manager.createTask(task2);
         historyManager.addTask(newTask1);
