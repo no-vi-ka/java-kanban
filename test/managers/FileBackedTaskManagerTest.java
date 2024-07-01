@@ -17,9 +17,12 @@ class FileBackedTaskManagerTest extends TaskManagerTest {
         String separator = System.lineSeparator();
         try {
             File file = File.createTempFile("test", "csv");
-
+            FileBackedTaskManager fileManager = new FileBackedTaskManager(file);
             String[] lines = Files.readString(file.toPath()).split(separator);
             assertEquals(lines.length, 1);
+            assertTrue(fileManager.getAllTasks().isEmpty());
+            assertTrue(fileManager.getAllEpics().isEmpty());
+            assertTrue(fileManager.getAllSubTasks().isEmpty());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -34,6 +37,9 @@ class FileBackedTaskManagerTest extends TaskManagerTest {
             assertEquals(fileManager.getAllTasks().size(), 0);
             assertEquals(fileManager.getAllEpics().size(), 0);
             assertEquals(fileManager.getAllSubTasks().size(), 0);
+            assertTrue(fileManager.getAllTasks().isEmpty());
+            assertTrue(fileManager.getAllEpics().isEmpty());
+            assertTrue(fileManager.getAllSubTasks().isEmpty());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
