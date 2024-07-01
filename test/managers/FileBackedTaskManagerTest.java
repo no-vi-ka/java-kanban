@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FileBackedTaskManagerTest extends TaskManagerTest {
 
@@ -46,6 +47,9 @@ class FileBackedTaskManagerTest extends TaskManagerTest {
             assertEquals(fileManager.getAllSubTasks().size(), 0);
             assertEquals(fileManager.getAllTasks().size(), 0);
             assertEquals(fileManager.getAllEpics().size(), 0);
+            assertTrue(fileManager.getAllTasks().isEmpty());
+            assertTrue(fileManager.getAllEpics().isEmpty());
+            assertTrue(fileManager.getAllSubTasks().isEmpty());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
