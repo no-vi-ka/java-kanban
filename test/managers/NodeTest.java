@@ -4,6 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Month;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class NodeTest {
@@ -18,7 +22,8 @@ class NodeTest {
 
     @Test
     void getTaskShouldReturnTask() {
-        Task task1 = new Task("a1", "b1");
+        Task task1 = new Task("a", "b", Duration.ofMinutes(10), LocalDateTime.of(2010, Month.JUNE,
+                10, 10, 10));
         Task newTask1 = manager.createTask(task1);
         Node<Task> newNode = new Node<>(null, newTask1, null);
         assertEquals(newTask1, newNode.getTask());
@@ -26,8 +31,10 @@ class NodeTest {
 
     @Test
     void getNextShouldReturnNextTask() {
-        Task task1 = new Task("a1", "b1");
-        Task task2 = new Task("a2", "b2");
+        Task task1 = new Task("a1", "b1", Duration.ofMinutes(10), LocalDateTime.of(2010, Month.JUNE,
+                10, 10, 10));
+        Task task2 = new Task("a2", "b2", Duration.ofMinutes(20), LocalDateTime.of(2020, Month.JULY,
+                20, 20, 20));
         Task newTask1 = manager.createTask(task1);
         Task newTask2 = manager.createTask(task2);
         historyManager.addTask(newTask1);
@@ -37,8 +44,10 @@ class NodeTest {
 
     @Test
     void getPrevShouldReturnPrevTask() {
-        Task task1 = new Task("a1", "b1");
-        Task task2 = new Task("a2", "b2");
+        Task task1 = new Task("a1", "b1", Duration.ofMinutes(10), LocalDateTime.of(2010, Month.JUNE,
+                10, 10, 10));
+        Task task2 = new Task("a2", "b2", Duration.ofMinutes(20), LocalDateTime.of(2020, Month.JULY,
+                20, 20, 20));
         Task newTask1 = manager.createTask(task1);
         Task newTask2 = manager.createTask(task2);
         historyManager.addTask(newTask1);
@@ -48,8 +57,10 @@ class NodeTest {
 
     @Test
     void setNextShouldSetNextNode() {
-        Task task1 = new Task("a1", "b1");
-        Task task2 = new Task("a2", "b2");
+        Task task1 = new Task("a1", "b1", Duration.ofMinutes(10), LocalDateTime.of(2010, Month.JUNE,
+                10, 10, 10));
+        Task task2 = new Task("a2", "b2", Duration.ofMinutes(20), LocalDateTime.of(2020, Month.JULY,
+                20, 20, 20));
         Task newTask1 = manager.createTask(task1);
         Task newTask2 = manager.createTask(task2);
         Node<Task> node1 = new Node<>(null, newTask1, null);
@@ -60,8 +71,10 @@ class NodeTest {
 
     @Test
     void setPrevShouldSetPrevNode() {
-        Task task1 = new Task("a1", "b1");
-        Task task2 = new Task("a2", "b2");
+        Task task1 = new Task("a1", "b1", Duration.ofMinutes(10), LocalDateTime.of(2010, Month.JUNE,
+                10, 10, 10));
+        Task task2 = new Task("a2", "b2", Duration.ofMinutes(20), LocalDateTime.of(2020, Month.JULY,
+                20, 20, 20));
         Task newTask1 = manager.createTask(task1);
         Task newTask2 = manager.createTask(task2);
         Node<Task> node1 = new Node<>(null, newTask1, null);

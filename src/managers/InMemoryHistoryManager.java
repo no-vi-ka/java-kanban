@@ -12,6 +12,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     private Node<Task> tail = null;
     private final Map<Integer, Node<Task>> tasksHistory = new HashMap<>();
 
+
     @Override
     public void addTask(Task task) {
         if (task != null) {
