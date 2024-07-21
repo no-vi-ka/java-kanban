@@ -3,7 +3,6 @@ package http;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import managers.InMemoryTaskManager;
 import managers.TaskManager;
 
 import java.io.IOException;
@@ -12,28 +11,30 @@ import java.util.Optional;
 
 abstract class BaseHttpHandler implements HttpHandler {
 
-    private final InMemoryTaskManager taskManager;
+    private final TaskManager taskManager;
     private final Gson gson;
 
-    public TaskManager getTaskManager() {
+    protected TaskManager getTaskManager() {
         return taskManager;
     }
 
-    public Gson getGson() {
+    protected Gson getGson() {
         return gson;
     }
 
-    protected BaseHttpHandler(InMemoryTaskManager taskManager, Gson gson) {
+    protected BaseHttpHandler(TaskManager taskManager, Gson gson) {
         this.taskManager = taskManager;
         this.gson = gson;
     }
 
-    int notFoundCode = 404;
-    int servesErrorCode = 500;
-    int internalCode = 406;
-    String notFoundText = "Not Found";
-    String internalText = "Internal Server Error";
-    String serverErrorText = "Not Acceptable";
+    final int NOTFOUNDCODE = 404;
+    final int BADREQUESTCODE = 400;
+    final int SERVERERRORCODE = 500;
+    final int INTERNALCODE = 406;
+    final String NOTFOUNDTEXT = "Not Found";
+    final String BADREQUESTTEXT = "Bad Request";
+    final String INTERNALTEXT = "Internal Server Error";
+    final String SERVERERRORTEXT = "Not Acceptable";
 
     protected void sendText(Object body, HttpExchange exchange, int code) throws IOException {
         String responseJson = gson.toJson(body);
@@ -45,18 +46,23 @@ abstract class BaseHttpHandler implements HttpHandler {
     }
 
     protected void sendNotFound(HttpExchange exchange) throws IOException {
-        ErrorResponse errorResponse = new ErrorResponse(notFoundText);
-        sendText(errorResponse, exchange, notFoundCode);
+        ErrorResponse errorResponse = new ErrorResponse(NOTFOUNDTEXT);
+        sendText(errorResponse, exchange, NOTFOUNDCODE);
+    }
+
+    protected void sendBadRequest(HttpExchange exchange) throws IOException {
+        ErrorResponse errorResponse = new ErrorResponse(BADREQUESTTEXT);
+        sendText(errorResponse, exchange, BADREQUESTCODE);
     }
 
     protected void sendHasInteractions(HttpExchange exchange) throws IOException {
-        ErrorResponse errorResponse = new ErrorResponse(internalText);
-        sendText(errorResponse, exchange, internalCode);
+        ErrorResponse errorResponse = new ErrorResponse(INTERNALTEXT);
+        sendText(errorResponse, exchange, INTERNALCODE);
     }
 
     protected void sendHasCode500(HttpExchange exchange) throws IOException {
-        ErrorResponse errorResponse = new ErrorResponse(serverErrorText);
-        sendText(errorResponse, exchange, servesErrorCode);
+        ErrorResponse errorResponse = new ErrorResponse(SERVERERRORTEXT);
+        sendText(errorResponse, exchange, SERVERERRORCODE);
     }
 
     protected Optional<Integer> getIdFromPath(HttpExchange exchange) {

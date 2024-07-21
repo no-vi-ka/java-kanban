@@ -2,8 +2,9 @@ package http;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import managers.InMemoryTaskManager;
+import managers.TaskManager;
 import tasks.Epic;
+import tasks.SubTask;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -12,7 +13,7 @@ import java.util.Optional;
 
 public class EpicsHandler extends BaseHttpHandler {
 
-    protected EpicsHandler(InMemoryTaskManager taskManager, Gson gson) {
+    public EpicsHandler(TaskManager taskManager, Gson gson) {
         super(taskManager, gson);
     }
 
@@ -33,35 +34,45 @@ public class EpicsHandler extends BaseHttpHandler {
 
     public void handleGetEpic(HttpExchange exchange) throws IOException {
         Optional<Integer> idFromPath = getIdFromPath(exchange);
-        if (idFromPath.isPresent()) {
-            Epic epic = getTaskManager().getEpicById(idFromPath.get());
-            sendText(epic, exchange, 200);
+        String[] splittedPath = exchange.getRequestURI().getPath().split("/");
+        if (idFromPath.isPresent() && getTaskManager().containsEpicId(idFromPath.get())) {
+            Epic epicById = getTaskManager().getEpicById(idFromPath.get());
+            if (splittedPath.length == 4) {
+                List<SubTask> epicSubTaskList = getTaskManager().getAllSubtasksOfEpic(epicById);
+                sendText(epicSubTaskList, exchange, 200);
+                return;
+            }
+            sendText(epicById, exchange, 200);
+        }
+        if (idFromPath.isPresent() && !getTaskManager().containsEpicId(idFromPath.get())) {
+            sendNotFound(exchange);
         }
         if (idFromPath.isEmpty()) {
-            Optional<List<Epic>> optionalEpicList = Optional.ofNullable(getTaskManager().getAllEpics());
-            if (optionalEpicList.isPresent()) {
-                List<Epic> epicList = optionalEpicList.get();
-                sendText(epicList, exchange, 200);
-            }
-            if (optionalEpicList.isEmpty()) {
-                sendNotFound(exchange);
-            }
+            List<Epic> epicList = getTaskManager().getAllEpics();
+            sendText(epicList, exchange, 200);
         }
     }
 
     public void handlePostEpic(HttpExchange exchange) throws IOException {
         try {
             String requestBody = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-            Epic epic = getGson().fromJson(requestBody, Epic.class);
+            Optional<Epic> optionalEpic = Optional.ofNullable(getGson().fromJson(requestBody, Epic.class));
+            if (optionalEpic.isEmpty()) {
+                sendBadRequest(exchange);
+                return;
+            }
+            Epic epic = optionalEpic.get();
             Optional<Integer> idFromPath = getIdFromPath(exchange);
-            if (idFromPath.isPresent()) {
+            if (idFromPath.isPresent() && getTaskManager().containsEpicId(idFromPath.get())) {
                 getTaskManager().updateEpic(epic);
                 sendText(epic, exchange, 200);
+            }
+            if (idFromPath.isPresent() && !getTaskManager().containsEpicId(idFromPath.get())) {
+                sendNotFound(exchange);
             }
             if (idFromPath.isEmpty()) {
                 getTaskManager().createEpic(epic);
                 sendText(epic, exchange, 201);
-
             }
         } catch (Exception e) {
             sendHasCode500(exchange);
@@ -72,12 +83,17 @@ public class EpicsHandler extends BaseHttpHandler {
         try {
             Optional<Integer> idFromPath = getIdFromPath(exchange);
             if (idFromPath.isEmpty()) {
-                sendNotFound(exchange);
+                sendBadRequest(exchange);
             }
             if (idFromPath.isPresent()) {
-                Epic epicToRemove = getTaskManager().getEpicById(idFromPath.get());
-                getTaskManager().removeEpicById(idFromPath.get());
-                sendText(epicToRemove, exchange, 200);
+                Optional<Epic> optionalEpic = Optional.ofNullable(getTaskManager().getEpicById(idFromPath.get()));
+                if (optionalEpic.isEmpty()) {
+                    sendNotFound(exchange);
+                } else {
+                    Epic epicToRemove = getTaskManager().getEpicById(idFromPath.get());
+                    getTaskManager().removeEpicById(idFromPath.get());
+                    sendText(epicToRemove, exchange, 200);
+                }
             }
         } catch (Exception e) {
             sendHasCode500(exchange);

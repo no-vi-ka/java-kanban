@@ -2,15 +2,14 @@ package http;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import managers.InMemoryTaskManager;
+import managers.TaskManager;
 import tasks.Task;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 public class PrioritizedHandler extends BaseHttpHandler {
-    protected PrioritizedHandler(InMemoryTaskManager taskManager, Gson gson) {
+    public PrioritizedHandler(TaskManager taskManager, Gson gson) {
         super(taskManager, gson);
     }
 
@@ -27,14 +26,10 @@ public class PrioritizedHandler extends BaseHttpHandler {
         }
     }
 
-    public void handleGetPrioritized(HttpExchange exchange) throws IOException {
+    private void handleGetPrioritized(HttpExchange exchange) throws IOException {
         try {
-            Optional<List<Task>> prioritizedList = Optional.ofNullable(getTaskManager().getPrioritizedTasks());
-            if (prioritizedList.isPresent()) {
-                sendText(prioritizedList.get(), exchange, 200);
-            } else {
-                sendNotFound(exchange);
-            }
+            List<Task> prioritizedList = getTaskManager().getPrioritizedTasks();
+            sendText(prioritizedList, exchange, 200);
         } catch (Exception e) {
             e.printStackTrace();
             sendHasCode500(exchange);

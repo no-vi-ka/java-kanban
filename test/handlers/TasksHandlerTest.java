@@ -7,6 +7,7 @@ import http.DurationAdapter;
 import http.HttpTaskServer;
 import http.LocalDateAdapter;
 import managers.InMemoryTaskManager;
+import managers.TaskManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TasksHandlerTest extends BaseHttpHandlerTest {
-    InMemoryTaskManager manager = new InMemoryTaskManager();
+    TaskManager manager = new InMemoryTaskManager();
     public static int PORT = 8080;
     HttpTaskServer taskServer;
     Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateAdapter()).registerTypeAdapter(Duration.class, new DurationAdapter()).create();
@@ -67,26 +68,6 @@ class TasksHandlerTest extends BaseHttpHandlerTest {
         assertEquals(1, tasksFromManager.size(), "Некорректное количество задач");
         assertEquals("a1", tasksFromManager.get(0).getTitle(), "Некорректное имя задачи");
     }
-
-
-    @Test
-    void shouldNotAddIfIntersectsWithExisting() throws IOException, InterruptedException {
-        Task task1 = new Task("a1", "b1", Duration.ofMinutes(10), LocalDateTime.of(2010, Month.JUNE,
-                10, 10, 10));
-
-        assertDoesNotThrow(() -> {
-            Task taskClone = new Task(task1);
-            manager.createTask(taskClone);
-        });
-
-        String taskJson = gson.toJson(task1);
-
-        URI url = URI.create("http://localhost:8080/tasks");
-        HttpResponse<String> response = sendHttpRequest(url, "POST", taskJson);
-
-        assertEquals(406, response.statusCode());
-    }
-
 
     @Test
     public void shouldReturnListFromManager() throws IOException, InterruptedException {

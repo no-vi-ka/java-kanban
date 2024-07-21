@@ -2,7 +2,7 @@ package http;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import managers.InMemoryTaskManager;
+import managers.TaskManager;
 import tasks.Task;
 
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.util.Optional;
 public class TasksHandler extends BaseHttpHandler {
 
 
-    protected TasksHandler(InMemoryTaskManager taskManager, Gson gson) {
+    public TasksHandler(TaskManager taskManager, Gson gson) {
         super(taskManager, gson);
     }
 
@@ -32,41 +32,42 @@ public class TasksHandler extends BaseHttpHandler {
         }
     }
 
+
     public void handleGetTask(HttpExchange exchange) throws IOException {
         Optional<Integer> idFromPath = getIdFromPath(exchange);
-        if (idFromPath.isPresent()) {
-            Task task = getTaskManager().getTaskById(idFromPath.get());
-            sendText(task, exchange, 200);
+        if (idFromPath.isPresent() && getTaskManager().containsTaskId(idFromPath.get())) {
+            Task taskById = getTaskManager().getTaskById(idFromPath.get());
+            sendText(taskById, exchange, 200);
+        }
+        if (idFromPath.isPresent() && !getTaskManager().containsTaskId(idFromPath.get())) {
+            sendNotFound(exchange);
         }
         if (idFromPath.isEmpty()) {
-            Optional<List<Task>> optionalTaskList = Optional.ofNullable(getTaskManager().getAllTasks());
-            if (optionalTaskList.isPresent()) {
-                List<Task> taskList = optionalTaskList.get();
-                sendText(taskList, exchange, 200);
-            }
-            if (optionalTaskList.isEmpty()) {
-                sendNotFound(exchange);
-            }
+            List<Task> taskList = getTaskManager().getAllTasks();
+            sendText(taskList, exchange, 200);
         }
     }
 
     public void handlePostTask(HttpExchange exchange) throws IOException {
         try {
             String requestBody = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-            Task task = getGson().fromJson(requestBody, Task.class);
+            Optional<Task> optionalTask = Optional.ofNullable(getGson().fromJson(requestBody, Task.class));
+            if (optionalTask.isEmpty()) {
+                sendBadRequest(exchange);
+                return;
+            }
+            Task task = optionalTask.get();
             Optional<Integer> idFromPath = getIdFromPath(exchange);
-            if (idFromPath.isPresent()) {
+            if (idFromPath.isPresent() && getTaskManager().containsTaskId(idFromPath.get())) {
                 getTaskManager().updateTask(task);
                 sendText(task, exchange, 200);
             }
-
+            if (idFromPath.isPresent() && !getTaskManager().containsTaskId(idFromPath.get())) {
+                sendNotFound(exchange);
+            }
             if (idFromPath.isEmpty()) {
-                if (!getTaskManager().isIntersectsExistingTask(task)) {
-                    getTaskManager().createTask(task);
-                    sendText(task, exchange, 201);
-                } else {
-                    sendHasInteractions(exchange);
-                }
+                getTaskManager().createTask(task);
+                sendText(task, exchange, 201);
             }
         } catch (Exception e) {
             sendHasCode500(exchange);
@@ -77,22 +78,18 @@ public class TasksHandler extends BaseHttpHandler {
         try {
             Optional<Integer> idFromPath = getIdFromPath(exchange);
             if (idFromPath.isEmpty()) {
-                sendNotFound(exchange);
+                sendBadRequest(exchange);
             }
-            if (idFromPath.isPresent()) {
-                if (!getTaskManager().containsId(idFromPath.get())) {
-                    sendNotFound(exchange);
-                    return;
-                }
+            if (idFromPath.isPresent() && getTaskManager().containsTaskId(idFromPath.get())) {
                 Task taskToRemove = getTaskManager().getTaskById(idFromPath.get());
                 getTaskManager().removeTaskById(idFromPath.get());
                 sendText(taskToRemove, exchange, 200);
+                if (idFromPath.isPresent() && !getTaskManager().containsTaskId(idFromPath.get())) {
+                    sendNotFound(exchange);
+                }
             }
         } catch (Exception e) {
             sendHasCode500(exchange);
         }
     }
 }
-
-
-

@@ -2,8 +2,9 @@ package http;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
-import managers.InMemoryTaskManager;
+import managers.TaskManager;
 import tasks.SubTask;
+import tasks.Task;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -12,7 +13,7 @@ import java.util.Optional;
 
 public class SubTasksHandler extends BaseHttpHandler {
 
-    protected SubTasksHandler(InMemoryTaskManager taskManager, Gson gson) {
+    public SubTasksHandler(TaskManager taskManager, Gson gson) {
         super(taskManager, gson);
     }
 
@@ -31,40 +32,45 @@ public class SubTasksHandler extends BaseHttpHandler {
         }
     }
 
+
     public void handleGetSubTask(HttpExchange exchange) throws IOException {
         Optional<Integer> idFromPath = getIdFromPath(exchange);
-        if (idFromPath.isPresent()) {
-            SubTask subTask = getTaskManager().getSubTaskById(idFromPath.get());
-            sendText(subTask, exchange, 200);
+        if (idFromPath.isPresent() && getTaskManager().containsSubTaskId(idFromPath.get())) {
+            SubTask subTaskById = getTaskManager().getSubTaskById(idFromPath.get());
+            sendText(subTaskById, exchange, 200);
+        }
+        if (idFromPath.isPresent() && !getTaskManager().containsSubTaskId(idFromPath.get())) {
+            sendNotFound(exchange);
         }
         if (idFromPath.isEmpty()) {
-            Optional<List<SubTask>> optionalSubTaskList = Optional.ofNullable(getTaskManager().getAllSubTasks());
-            if (optionalSubTaskList.isPresent()) {
-                List<SubTask> subTaskList = optionalSubTaskList.get();
-                sendText(subTaskList, exchange, 200);
-            }
-            if (optionalSubTaskList.isEmpty()) {
-                sendNotFound(exchange);
-            }
+            List<SubTask> subTaskList = getTaskManager().getAllSubTasks();
+            sendText(subTaskList, exchange, 200);
         }
     }
 
     public void handlePostSubTask(HttpExchange exchange) throws IOException {
         try {
             String requestBody = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-            SubTask subTask = getGson().fromJson(requestBody, SubTask.class);
+            Optional<SubTask> optionalSubTask = Optional.ofNullable(getGson().fromJson(requestBody, SubTask.class));
+            if (optionalSubTask.isEmpty()) {
+                sendBadRequest(exchange);
+                return;
+            }
+            SubTask subTask = optionalSubTask.get();
             Optional<Integer> idFromPath = getIdFromPath(exchange);
-            if (idFromPath.isPresent()) {
+            if (idFromPath.isPresent() && getTaskManager().containsSubTaskId(idFromPath.get())) {
                 getTaskManager().updateSubTask(subTask);
                 sendText(subTask, exchange, 200);
             }
-
+            if (idFromPath.isPresent() && !getTaskManager().containsSubTaskId(idFromPath.get())) {
+                sendNotFound(exchange);
+            }
             if (idFromPath.isEmpty()) {
                 getTaskManager().createSubTask(subTask);
                 sendText(subTask, exchange, 201);
             }
         } catch (Exception e) {
-            sendHasInteractions(exchange);
+            sendHasCode500(exchange);
         }
     }
 
@@ -72,16 +78,15 @@ public class SubTasksHandler extends BaseHttpHandler {
         try {
             Optional<Integer> idFromPath = getIdFromPath(exchange);
             if (idFromPath.isEmpty()) {
-                sendNotFound(exchange);
+                sendBadRequest(exchange);
             }
-            if (idFromPath.isPresent()) {
-                if (!getTaskManager().containsId(idFromPath.get())) {
-                    sendNotFound(exchange);
-                    return;
-                }
-                SubTask taskToRemove = getTaskManager().getSubTaskById(idFromPath.get());
+            if (idFromPath.isPresent() && getTaskManager().containsSubTaskId(idFromPath.get())) {
+                SubTask subTaskToRemove = getTaskManager().getSubTaskById(idFromPath.get());
                 getTaskManager().removeSubtaskById(idFromPath.get());
-                sendText(taskToRemove, exchange, 200);
+                sendText(subTaskToRemove, exchange, 200);
+                if (idFromPath.isPresent() && !getTaskManager().containsSubTaskId(idFromPath.get())) {
+                    sendNotFound(exchange);
+                }
             }
         } catch (Exception e) {
             sendHasCode500(exchange);

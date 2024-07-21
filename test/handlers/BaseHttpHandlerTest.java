@@ -6,6 +6,7 @@ import http.DurationAdapter;
 import http.HttpTaskServer;
 import http.LocalDateAdapter;
 import managers.InMemoryTaskManager;
+import managers.TaskManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -18,7 +19,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 abstract class BaseHttpHandlerTest {
-    InMemoryTaskManager manager;
+    TaskManager manager;
     HttpTaskServer server;
     Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateAdapter())

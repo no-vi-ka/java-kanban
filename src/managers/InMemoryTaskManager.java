@@ -290,4 +290,19 @@ public class InMemoryTaskManager implements TaskManager {
     public boolean containsId(int id) {
         return (tasks.containsKey(id) || subTasks.containsKey(id) || epics.containsKey(id));
     }
+
+    @Override
+    public boolean containsTaskId(int id) {
+        return tasks.containsKey(id);
+    }
+
+    @Override
+    public boolean containsSubTaskId(int id) {
+        return subTasks.containsKey(id);
+    }
+
+    @Override
+    public boolean containsEpicId(int id) {
+        return epics.containsKey(id);
+    }
 }
