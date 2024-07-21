@@ -27,14 +27,14 @@ abstract class BaseHttpHandler implements HttpHandler {
         this.gson = gson;
     }
 
-    final int NOTFOUNDCODE = 404;
-    final int BADREQUESTCODE = 400;
-    final int SERVERERRORCODE = 500;
-    final int INTERNALCODE = 406;
-    final String NOTFOUNDTEXT = "Not Found";
-    final String BADREQUESTTEXT = "Bad Request";
-    final String INTERNALTEXT = "Internal Server Error";
-    final String SERVERERRORTEXT = "Not Acceptable";
+    final int NOT_FOUND_CODE = 404;
+    final int BAD_REQUEST_CODE = 400;
+    final int SERVER_ERROR_CODE = 500;
+    final int INTERNAL_CODE = 406;
+    final String NOT_FOUND_TEXT = "Not Found";
+    final String BAD_REQUEST_TEXT = "Bad Request";
+    final String INTERNAL_TEXT = "Internal Server Error";
+    final String SERVER_ERROR_TEXT = "Not Acceptable";
 
     protected void sendText(Object body, HttpExchange exchange, int code) throws IOException {
         String responseJson = gson.toJson(body);
@@ -46,23 +46,23 @@ abstract class BaseHttpHandler implements HttpHandler {
     }
 
     protected void sendNotFound(HttpExchange exchange) throws IOException {
-        ErrorResponse errorResponse = new ErrorResponse(NOTFOUNDTEXT);
-        sendText(errorResponse, exchange, NOTFOUNDCODE);
+        ErrorResponse errorResponse = new ErrorResponse(NOT_FOUND_TEXT);
+        sendText(errorResponse, exchange, NOT_FOUND_CODE);
     }
 
     protected void sendBadRequest(HttpExchange exchange) throws IOException {
-        ErrorResponse errorResponse = new ErrorResponse(BADREQUESTTEXT);
-        sendText(errorResponse, exchange, BADREQUESTCODE);
+        ErrorResponse errorResponse = new ErrorResponse(BAD_REQUEST_TEXT);
+        sendText(errorResponse, exchange, BAD_REQUEST_CODE);
     }
 
     protected void sendHasInteractions(HttpExchange exchange) throws IOException {
-        ErrorResponse errorResponse = new ErrorResponse(INTERNALTEXT);
-        sendText(errorResponse, exchange, INTERNALCODE);
+        ErrorResponse errorResponse = new ErrorResponse(INTERNAL_TEXT);
+        sendText(errorResponse, exchange, INTERNAL_CODE);
     }
 
     protected void sendHasCode500(HttpExchange exchange) throws IOException {
-        ErrorResponse errorResponse = new ErrorResponse(SERVERERRORTEXT);
-        sendText(errorResponse, exchange, SERVERERRORCODE);
+        ErrorResponse errorResponse = new ErrorResponse(SERVER_ERROR_TEXT);
+        sendText(errorResponse, exchange, SERVER_ERROR_CODE);
     }
 
     protected Optional<Integer> getIdFromPath(HttpExchange exchange) {
