@@ -35,17 +35,17 @@ public class TasksHandler extends BaseHttpHandler {
 
     public void handleGetTask(HttpExchange exchange) throws IOException {
         Optional<Integer> idFromPath = getIdFromPath(exchange);
-        if (idFromPath.isPresent() && getTaskManager().containsTaskId(idFromPath.get())) {
-            Task taskById = getTaskManager().getTaskById(idFromPath.get());
-            sendText(taskById, exchange, 200);
-        }
-        if (idFromPath.isPresent() && !getTaskManager().containsTaskId(idFromPath.get())) {
-            sendNotFound(exchange);
-        }
         if (idFromPath.isEmpty()) {
             List<Task> taskList = getTaskManager().getAllTasks();
             sendText(taskList, exchange, 200);
         }
+        if (getTaskManager().containsTaskId(idFromPath.get())) {
+            Task taskById = getTaskManager().getTaskById(idFromPath.get());
+            sendText(taskById, exchange, 200);
+        } else {
+            sendNotFound(exchange);
+        }
+
     }
 
     public void handlePostTask(HttpExchange exchange) throws IOException {
@@ -58,17 +58,18 @@ public class TasksHandler extends BaseHttpHandler {
             }
             Task task = optionalTask.get();
             Optional<Integer> idFromPath = getIdFromPath(exchange);
-            if (idFromPath.isPresent() && getTaskManager().containsTaskId(idFromPath.get())) {
-                getTaskManager().updateTask(task);
-                sendText(task, exchange, 200);
-            }
-            if (idFromPath.isPresent() && !getTaskManager().containsTaskId(idFromPath.get())) {
-                sendNotFound(exchange);
-            }
             if (idFromPath.isEmpty()) {
                 getTaskManager().createTask(task);
                 sendText(task, exchange, 201);
+                return;
             }
+            if (getTaskManager().containsTaskId(idFromPath.get())) {
+                getTaskManager().updateTask(task);
+                sendText(task, exchange, 200);
+            } else {
+                sendNotFound(exchange);
+            }
+
         } catch (Exception e) {
             sendHasCode500(exchange);
         }
@@ -79,14 +80,14 @@ public class TasksHandler extends BaseHttpHandler {
             Optional<Integer> idFromPath = getIdFromPath(exchange);
             if (idFromPath.isEmpty()) {
                 sendBadRequest(exchange);
+                return;
             }
-            if (idFromPath.isPresent() && getTaskManager().containsTaskId(idFromPath.get())) {
+            if (getTaskManager().containsTaskId(idFromPath.get())) {
                 Task taskToRemove = getTaskManager().getTaskById(idFromPath.get());
                 getTaskManager().removeTaskById(idFromPath.get());
                 sendText(taskToRemove, exchange, 200);
-                if (idFromPath.isPresent() && !getTaskManager().containsTaskId(idFromPath.get())) {
-                    sendNotFound(exchange);
-                }
+            } else {
+                sendNotFound(exchange);
             }
         } catch (Exception e) {
             sendHasCode500(exchange);
