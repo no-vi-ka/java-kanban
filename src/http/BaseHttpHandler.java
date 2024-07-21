@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
-abstract public class BaseHttpHandler implements HttpHandler {
+abstract class BaseHttpHandler implements HttpHandler {
 
     private final InMemoryTaskManager taskManager;
     private final Gson gson;
@@ -27,9 +27,6 @@ abstract public class BaseHttpHandler implements HttpHandler {
         this.taskManager = taskManager;
         this.gson = gson;
     }
-
-    @Override
-    abstract public void handle(HttpExchange exchange);
 
     int notFoundCode = 404;
     int servesErrorCode = 500;
