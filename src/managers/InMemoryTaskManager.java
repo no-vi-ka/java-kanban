@@ -5,6 +5,7 @@ import tasks.SubTask;
 import tasks.Task;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
     public final Map<Integer, Task> tasks = new HashMap<>();
@@ -12,7 +13,7 @@ public class InMemoryTaskManager implements TaskManager {
     public final Map<Integer, Epic> epics = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
     private int nextId = 1;
-    private final TreeSet<Task> prioritizedTasks = new TreeSet<>();
+    private TreeSet<Task> prioritizedTasks = new TreeSet<>();
 
     @Override
     public Task createTask(Task newTask) {
@@ -211,15 +212,55 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getHistory();
     }
 
-
     public List<Task> getPrioritizedTasks() {
-        return prioritizedTasks.stream().toList();
+        Collection<Task> tasksCollection = tasks.values();
+        List<Task> result = new ArrayList<>();
+        Collection<Task> nullStartTime = new ArrayList<>();
+        Collection<Task> haveStartTime = new ArrayList<>();
+
+        if (tasksCollection != null) {
+            if (prioritizedTasks != null && prioritizedTasks.size() == tasksCollection.size()) {
+                result = new ArrayList<>(prioritizedTasks);
+            } else {
+                for (Task task : tasksCollection) {
+                    if (task.getStartTime() == null) {
+                        result.add(task);
+                    } else {
+                        haveStartTime.add(task);
+                    }
+                }
+                result = haveStartTime
+                        .stream()
+                        .sorted(Comparator.comparing(Task::getStartTime))
+                        .collect(Collectors.toList());
+                prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getId));
+                prioritizedTasks.addAll(result);
+            }
+            result.addAll(nullStartTime);
+        }
+
+        return result;
     }
 
 
     public boolean isIntersectedTasks(Task task1, Task task2) {
         return ((task1.getStartTime().isBefore(task2.getEndTime()))
                 && (task2.getStartTime().isBefore(task1.getEndTime())));
+    }
+
+    @Override
+    public boolean isIntersectsExistingSubTask(SubTask inputSubTask) {
+        List<Task> intersectedTasks = prioritizedTasks.stream()
+                .filter((task) -> isIntersectedTasks(inputSubTask, task))
+                .toList();
+        return !intersectedTasks.isEmpty();
+    }
+
+    public boolean isIntersectsExistingTask(Task inputTask) {
+        List<Task> intersectedSubTasks = prioritizedTasks.stream()
+                .filter((task) -> isIntersectedTasks(inputTask, task))
+                .toList();
+        return !intersectedSubTasks.isEmpty();
     }
 
     private void updatePrioritizedTasks() {
@@ -244,5 +285,9 @@ public class InMemoryTaskManager implements TaskManager {
             }
             prioritizedTasks.add(epic);
         }
+    }
+
+    public boolean containsId(int id) {
+        return (tasks.containsKey(id) || subTasks.containsKey(id) || epics.containsKey(id));
     }
 }

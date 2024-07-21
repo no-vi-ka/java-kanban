@@ -52,4 +52,11 @@ public interface TaskManager {
     List<Task> getPrioritizedTasks();
 
     boolean isIntersectedTasks(Task task1, Task task2);
+
+    boolean isIntersectsExistingSubTask(SubTask subTask);
+
+    boolean isIntersectsExistingTask(Task task);
+
+    public boolean containsId(int id);
+
 }
