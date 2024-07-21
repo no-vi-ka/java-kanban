@@ -58,8 +58,11 @@ public interface TaskManager {
     boolean isIntersectsExistingTask(Task task);
 
     public boolean containsId(int id);
+
     public boolean containsTaskId(int id);
+
     public boolean containsSubTaskId(int id);
+
     public boolean containsEpicId(int id);
 
 }
