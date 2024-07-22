@@ -48,4 +48,21 @@ public interface TaskManager {
     List<SubTask> getAllSubtasksOfEpic(Epic epic);
 
     List<Task> getHistory();
+
+    List<Task> getPrioritizedTasks();
+
+    boolean isIntersectedTasks(Task task1, Task task2);
+
+    boolean isIntersectsExistingSubTask(SubTask subTask);
+
+    boolean isIntersectsExistingTask(Task task);
+
+    public boolean containsId(int id);
+
+    public boolean containsTaskId(int id);
+
+    public boolean containsSubTaskId(int id);
+
+    public boolean containsEpicId(int id);
+
 }
